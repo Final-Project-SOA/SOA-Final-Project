@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 
+const patientClient = require('./grpc/patientClient');
+
 const app = express();
 
 app.use(cors());
@@ -12,19 +14,28 @@ app.get('/', (req, res) => {
 
 app.get('/patients', (req, res) => {
 
-    console.log("PATIENT ROUTE CALLED");
+    patientClient.GetPatients({}, (error, response) => {
 
-    res.json({
-        patients: [
-            {
-                id: 1,
-                name: "Fatma"
-            },
-            {
-                id: 2,
-                name: "Eya"
-            }
-        ]
+        if (error) {
+            return res.status(500).json(error);
+        }
+
+        res.json(response);
+
+    });
+
+});
+
+app.post('/patients', (req, res) => {
+
+    patientClient.AddPatient(req.body, (error, response) => {
+
+        if (error) {
+            return res.status(500).json(error);
+        }
+
+        res.json(response);
+
     });
 
 });
