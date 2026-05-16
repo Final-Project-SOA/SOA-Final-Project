@@ -1,45 +1,72 @@
 const express = require('express');
 const cors = require('cors');
 
+const { ApolloServer } = require('apollo-server-express');
+
 const patientClient = require('./grpc/patientClient');
 
-const app = express();
+const { typeDefs, resolvers } = require('./graphql/schema');
 
-app.use(cors());
-app.use(express.json());
+async function startServer() {
 
-app.get('/', (req, res) => {
-    res.send('API Gateway Running');
-});
+    const app = express();
 
-app.get('/patients', (req, res) => {
+    app.use(cors());
 
-    patientClient.GetPatients({}, (error, response) => {
+    app.get('/', (req, res) => {
+        res.send('API Gateway Running');
+    });
 
-        if (error) {
-            return res.status(500).json(error);
-        }
+    app.get('/patients', (req, res) => {
 
-        res.json(response);
+        patientClient.GetPatients({}, (error, response) => {
+
+            if (error) {
+                return res.status(500).json(error);
+            }
+
+            res.json(response);
+
+        });
 
     });
 
-});
+    app.post('/patients', express.json(), (req, res) => {
 
-app.post('/patients', (req, res) => {
+        patientClient.AddPatient(req.body, (error, response) => {
 
-    patientClient.AddPatient(req.body, (error, response) => {
+            if (error) {
+                return res.status(500).json(error);
+            }
 
-        if (error) {
-            return res.status(500).json(error);
-        }
+            res.json(response);
 
-        res.json(response);
+        });
 
     });
 
-});
+    const server = new ApolloServer({
+        typeDefs,
+        resolvers,
+        introspection: true
+    });
 
-app.listen(3000, () => {
-    console.log('Gateway running on port 3000');
-});
+    await server.start();
+
+    server.applyMiddleware({
+        app,
+        path: '/graphql'
+    });
+
+    app.listen(3000, () => {
+
+        console.log('Gateway running on port 3000');
+
+        console.log('GraphQL running on:');
+        console.log('http://localhost:3000/graphql');
+
+    });
+
+}
+
+startServer();
