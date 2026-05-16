@@ -1,9 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 
-const { ApolloServer } = require('apollo-server-express');
-
 const patientClient = require('./grpc/patientClient');
+const appointmentClient = require('./grpc/appointmentClient');
+
+const { ApolloServer } = require('apollo-server-express');
 
 const { typeDefs, resolvers } = require('./graphql/schema');
 
@@ -13,10 +14,7 @@ async function startServer() {
 
     app.use(cors());
 
-    app.get('/', (req, res) => {
-        res.send('API Gateway Running');
-    });
-
+    app.use(express.json());
     app.get('/patients', (req, res) => {
 
         patientClient.GetPatients({}, (error, response) => {
@@ -57,7 +55,45 @@ async function startServer() {
         app,
         path: '/graphql'
     });
+    app.get('/appointments', (req, res) => {
 
+    appointmentClient.GetAppointments(
+        {},
+        (error, response) => {
+
+            if (error) {
+                return res.status(500).json(error);
+            }
+
+            res.json(response);
+
+        }
+    );
+
+});
+
+app.post('/appointments', (req, res) => {
+
+    appointmentClient.CreateAppointment(
+
+        {
+            patientId: req.body.patientId,
+            doctor: req.body.doctor,
+            date: req.body.date
+        },
+
+        (error, response) => {
+
+            if (error) {
+                return res.status(500).json(error);
+            }
+
+            res.json(response);
+
+        }
+    );
+
+});
     app.listen(3000, () => {
 
         console.log('Gateway running on port 3000');

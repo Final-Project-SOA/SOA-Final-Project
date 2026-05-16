@@ -39,7 +39,12 @@ function CreateAppointment(call, callback) {
 
     console.log('Appointment event published');
 
-    callback(null, appointment);
+    callback(null, {
+    id: appointment.id,
+    patientId: appointment.patientId,
+    doctor: appointment.doctor,
+    date: appointment.date
+});
 }
 
 function main() {

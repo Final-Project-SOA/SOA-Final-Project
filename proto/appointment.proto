@@ -3,17 +3,29 @@ syntax = "proto3";
 package appointment;
 
 service AppointmentService {
+
   rpc GetAppointments (Empty)
       returns (AppointmentList);
+
+  rpc CreateAppointment (AppointmentRequest)
+      returns (AppointmentResponse);
 }
 
 message Empty {}
 
-message Appointment {
-  int32 id = 1;
+message AppointmentRequest {
+  int32 patientId = 1;
   string doctor = 2;
+  string date = 3;
+}
+
+message AppointmentResponse {
+  int32 id = 1;
+  int32 patientId = 2;
+  string doctor = 3;
+  string date = 4;
 }
 
 message AppointmentList {
-  repeated Appointment appointments = 1;
+  repeated AppointmentResponse appointments = 1;
 }
