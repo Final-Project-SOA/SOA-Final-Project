@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package medical;
+
+service MedicalService {
+  rpc GetMedicalRecords (Empty)
+      returns (MedicalList);
+}
+
+message Empty {}
+
+message MedicalRecord {
+  int32 id = 1;
+  string diagnosis = 2;
+}
+
+message MedicalList {
+  repeated MedicalRecord records = 1;
+}
