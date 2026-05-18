@@ -2,7 +2,7 @@ Système SOA de Gestion de Clinique Intelligente
 -----------------------------------------------------------------------------------------------------------------------------
 Description du projet
 Ce projet est une application basée sur une architecture orientée services (SOA) permettant la gestion d’une clinique médicale.
---------------------------------------------------------------------------------------------------------------------------
+
 Il simule un système réel basé sur des microservices distribués communiquant via :
 REST API
 gRPC
@@ -35,22 +35,22 @@ Patient Service         Appointment Service
                                 v
                  Email Notification (Nodemailer Gmail)
 
------------------------------------------------------------------------------------------------------------------------------
+
 Technologies utilisées
-----------------------------------------------------------------------------------------------------------------------------
+
 Node.js
 Express.js
 gRPC
 Kafka (architecture événementielle)
 SQLite
 Nodemailer (email automatique)
------------------------------------------------------------------------------------------------------------------------------
+
 Frontend
 React (Vite)
 Axios
 React Router
 RxDB (base de données offline)
-----------------------------------------------------------------------------------------------------------------------------
+
 Microservices
 1-Service Patient
 Gestion des patients (CRUD)
@@ -78,7 +78,7 @@ Gestion des patients
 Gestion des rendez-vous
 Interface utilisateur responsive
 Cache offline avec RxDB
----------------------------------------------------------------------------------------------------------------------------
+
 Système de notification (Email AI Agent)
 Lorsqu’un rendez-vous est créé :
 
@@ -91,14 +91,14 @@ Contenu de l’email :
 ID du patient
 Nom du médecin
 Date du rendez-vous
------------------------------------------------------------------------------------------------------------------------------
+
 Fonctionnalité Offline (RxDB)
 Le frontend utilise RxDB pour :
 
 Stocker les données localement
 Fonctionner sans internet
 Synchroniser automatiquement avec le backend
-----------------------------------------------------------------------------------------------------------------------------
+
 
 Fonctionnalités principales
 
