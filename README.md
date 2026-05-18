@@ -9,14 +9,14 @@ gRPC
 Kafka (event-driven)
 GraphQL
 Frontend React
--------------------------------------------------------------------------------------------------------------------------
+
 Le système permet de gérer :
 -Patients
 Rendez-vous médicaux
 Notifications automatiques par email
 Interface web moderne
 Cache offline (RxDB)
------------------------------------------------------------------------------------------------------------------------------
+
 Architecture du système
 
 Frontend (React + RxDB)
