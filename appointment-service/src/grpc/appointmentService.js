@@ -1,6 +1,8 @@
 const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
 const path = require('path');
+const sendAppointmentEmail =
+    require('../../../medical-service/src/email/sendEmail');
 
 const publishAppointment =
     require('../kafka/eventBus');
@@ -41,9 +43,33 @@ async function CreateAppointment(call, callback) {
 
         appointments.push(appointment);
 
-        await publishAppointment(appointment);
+        console.log('Appointment created:', appointment);
 
-        console.log('Appointment Kafka event published');
+        try {
+
+            await publishAppointment(appointment);
+
+            console.log('Appointment Kafka event published');
+
+        } catch (kafkaError) {
+
+            console.log('Kafka publish error:');
+            console.log(kafkaError.message);
+
+        }
+
+        try {
+
+            await sendAppointmentEmail(appointment);
+
+            console.log('MCP Email AI Agent triggered');
+
+        } catch (emailError) {
+
+            console.log('MCP Email AI Agent error:');
+            console.log(emailError.message);
+
+        }
 
         callback(null, {
 
@@ -54,14 +80,21 @@ async function CreateAppointment(call, callback) {
             doctor: appointment.doctor,
 
             date: appointment.date
+
         });
 
     } catch (error) {
 
-        console.error(error);
+        console.log('CreateAppointment error:');
+        console.log(error.message);
 
-        callback(error);
+        callback({
+            code: grpc.status.INTERNAL,
+            message: error.message
+        });
+
     }
+
 }
 
 function main() {
@@ -82,15 +115,26 @@ function main() {
 
         grpc.ServerCredentials.createInsecure(),
 
-        () => {
+        (error, port) => {
+
+            if (error) {
+
+                console.log('gRPC server error:');
+                console.log(error.message);
+                return;
+
+            }
 
             console.log(
-                'Appointment gRPC running on 50052'
+                `Appointment gRPC running on ${port}`
             );
 
             server.start();
+
         }
+
     );
+
 }
 
 main();
