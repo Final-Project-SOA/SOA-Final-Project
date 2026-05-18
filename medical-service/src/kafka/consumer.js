@@ -1,27 +1,51 @@
-const eventBus =
-    require('../../../appointment-service/src/kafka/eventBus');
+const { Kafka } = require('kafkajs');
 
 const sendAppointmentEmail =
     require('../email/sendEmail');
 
-console.log('Medical consumer listening...');
+const kafka = new Kafka({
+    clientId: 'medical-service',
+    brokers: ['localhost:9092']
+});
 
-eventBus.on('appointment-created', async (data) => {
+const consumer = kafka.consumer({
+    groupId: 'medical-group'
+});
 
-    console.log('NEW APPOINTMENT RECEIVED');
+async function run() {
 
-    console.log(data);
+    await consumer.connect();
 
-    await sendAppointmentEmail({
-
-        patient: 'Fatma',
-
-        email: 'fatma.belghith@polytechnicien.tn',
-
-        doctor: data.doctor,
-
-        date: data.date
-
+    await consumer.subscribe({
+        topic: 'appointments',
+        fromBeginning: true
     });
 
-});
+    console.log('Medical consumer listening...');
+
+    await consumer.run({
+
+        eachMessage: async ({ message }) => {
+
+            const data =
+                JSON.parse(message.value.toString());
+
+            console.log('NEW APPOINTMENT RECEIVED');
+
+            console.log(data);
+
+            await sendAppointmentEmail({
+
+                patient: 'Fatma',
+
+                email: 'fatma.belghith@polytechnicien.tn',
+
+                doctor: data.doctor,
+
+                date: data.date
+            });
+        }
+    });
+}
+
+run();
