@@ -14,6 +14,28 @@ async function startServer() {
 
     app.use(cors());
 
+    /*
+        GraphQL doit être monté AVANT express.json()
+        sinon erreur Postman:
+        "InternalServerError: stream is not readable"
+    */
+    const server = new ApolloServer({
+        typeDefs,
+        resolvers,
+        introspection: true
+    });
+
+    await server.start();
+
+    server.applyMiddleware({
+        app,
+        path: '/graphql'
+    });
+
+    /*
+        express.json() est utilisé seulement pour REST
+        après GraphQL
+    */
     app.use(express.json());
 
     app.get('/patients', (req, res) => {
@@ -21,7 +43,10 @@ async function startServer() {
         patientClient.GetPatients({}, (error, response) => {
 
             if (error) {
-                return res.status(500).json(error);
+                return res.status(500).json({
+                    message: 'Patient service error',
+                    error: error.message
+                });
             }
 
             res.json(response);
@@ -35,7 +60,10 @@ async function startServer() {
         patientClient.AddPatient(req.body, (error, response) => {
 
             if (error) {
-                return res.status(500).json(error);
+                return res.status(500).json({
+                    message: 'Patient creation error',
+                    error: error.message
+                });
             }
 
             res.json(response);
@@ -46,18 +74,18 @@ async function startServer() {
 
     app.get('/appointments', (req, res) => {
 
-        appointmentClient.GetAppointments(
-            {},
-            (error, response) => {
+        appointmentClient.GetAppointments({}, (error, response) => {
 
-                if (error) {
-                    return res.status(500).json(error);
-                }
-
-                res.json(response);
-
+            if (error) {
+                return res.status(500).json({
+                    message: 'Appointment service error',
+                    error: error.message
+                });
             }
-        );
+
+            res.json(response);
+
+        });
 
     });
 
@@ -74,12 +102,16 @@ async function startServer() {
             (error, response) => {
 
                 if (error) {
-                    return res.status(500).json(error);
+                    return res.status(500).json({
+                        message: 'Appointment creation error',
+                        error: error.message
+                    });
                 }
 
                 res.json(response);
 
             }
+
         );
 
     });
@@ -97,25 +129,124 @@ async function startServer() {
             lastEvent: 'Waiting for appointment event'
         });
 
-    });
+    }
+    
+);
+app.get('/patients/search', (req, res) => {
+    patientClient.SearchPatients(
+        {
+            keyword: req.query.keyword || ''
+        },
+        (error, response) => {
+            if (error) {
+                return res.status(500).json({
+                    message: 'Patient search error',
+                    error: error.message
+                });
+            }
 
-    const server = new ApolloServer({
-        typeDefs,
-        resolvers,
-        introspection: true
-    });
+            res.json(response);
+        }
+    );
+});
 
-    await server.start();
+app.put('/patients/:id', (req, res) => {
+    patientClient.UpdatePatient(
+        {
+            id: Number(req.params.id),
+            name: req.body.name,
+            age: Number(req.body.age),
+            disease: req.body.disease
+        },
+        (error, response) => {
+            if (error) {
+                return res.status(500).json({
+                    message: 'Patient update error',
+                    error: error.message
+                });
+            }
 
-    server.applyMiddleware({
-        app,
-        path: '/graphql'
-    });
+            res.json(response);
+        }
+    );
+});
 
+app.delete('/patients/:id', (req, res) => {
+    patientClient.DeletePatient(
+        {
+            id: Number(req.params.id)
+        },
+        (error, response) => {
+            if (error) {
+                return res.status(500).json({
+                    message: 'Patient delete error',
+                    error: error.message
+                });
+            }
+
+            res.json(response);
+        }
+    );
+});
+app.get('/appointments/search', (req, res) => {
+    appointmentClient.SearchAppointments(
+        {
+            keyword: req.query.keyword || ''
+        },
+        (error, response) => {
+            if (error) {
+                return res.status(500).json({
+                    message: 'Appointment search error',
+                    error: error.message
+                });
+            }
+
+            res.json(response);
+        }
+    );
+});
+
+app.put('/appointments/:id', (req, res) => {
+    appointmentClient.UpdateAppointment(
+        {
+            id: Number(req.params.id),
+            patientId: Number(req.body.patientId),
+            doctor: req.body.doctor,
+            date: req.body.date
+        },
+        (error, response) => {
+            if (error) {
+                return res.status(500).json({
+                    message: 'Appointment update error',
+                    error: error.message
+                });
+            }
+
+            res.json(response);
+        }
+    );
+});
+
+app.delete('/appointments/:id', (req, res) => {
+    appointmentClient.DeleteAppointment(
+        {
+            id: Number(req.params.id)
+        },
+        (error, response) => {
+            if (error) {
+                return res.status(500).json({
+                    message: 'Appointment delete error',
+                    error: error.message
+                });
+            }
+
+            res.json(response);
+        }
+    );
+});
     app.listen(3000, () => {
 
         console.log('Gateway running on port 3000');
-
         console.log('GraphQL running on:');
         console.log('http://localhost:3000/graphql');
 

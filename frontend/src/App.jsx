@@ -10,41 +10,26 @@ import Patients from './pages/Patients';
 import Appointments from './pages/Appointments';
 
 function App() {
-
     return (
-
         <BrowserRouter>
+            <div className="app-shell">
 
-            <div className="container">
-
-                <div className="navbar">
-
-                    <h2>Smart Clinic SOA</h2>
-
-                    <div className="nav-links">
-
-                        <Link to="/patients">
-                            Patients
-                        </Link>
-
-                        <Link to="/appointments">
-                            Appointments
-                        </Link>
-
+                <header className="topbar">
+                    <div>
+                        <h1>Smart Clinic SOA</h1>
+                        <p>Microservices healthcare management system</p>
                     </div>
 
-                </div>
+                    <nav>
+                        <Link to="/patients">Patients</Link>
+                        <Link to="/appointments">Appointments</Link>
+                    </nav>
+                </header>
 
                 <Routes>
-
                     <Route
                         path="/"
-                        element={
-                            <Navigate
-                                to="/patients"
-                                replace
-                            />
-                        }
+                        element={<Navigate to="/patients" replace />}
                     />
 
                     <Route
@@ -56,15 +41,11 @@ function App() {
                         path="/appointments"
                         element={<Appointments />}
                     />
-
                 </Routes>
 
             </div>
-
         </BrowserRouter>
-
     );
-
 }
 
 export default App;

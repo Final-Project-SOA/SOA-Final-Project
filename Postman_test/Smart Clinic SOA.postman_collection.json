@@ -1,0 +1,153 @@
+{
+  "info": {
+    "_postman_id": "1c28f614-6de4-4580-aaf4-8d47c4d50e66",
+    "name": "Smart Clinic SOA",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "27511763",
+    "_collection_link": "https://go.postman.co/collection/27511763-1c28f614-6de4-4580-aaf4-8d47c4d50e66?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "MCP Email Agent Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/mcp-email/status",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "mcp-email",
+            "status"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get all patients",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/patients",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "patients"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add patients",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Eya Belkacem\",\r\n  \"age\": 25,\r\n  \"disease\": \"COVID-19\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/patients",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "patients"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get all appointments",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/appointments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "appointments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create appointment",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"patientId\": 3,\r\n  \"doctor\": \"Dr Oussema\",\r\n  \"date\": \"2026-05-25\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/appointments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "appointments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost:3000/graphql",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"query\": \"query { patients { id name age disease } }\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/graphql",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

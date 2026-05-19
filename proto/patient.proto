@@ -3,28 +3,35 @@ syntax = "proto3";
 package patient;
 
 service PatientService {
-
-  rpc GetPatients (Empty) returns (PatientList);
-
-  rpc AddPatient (PatientRequest)
-      returns (PatientResponse);
+    rpc GetPatients (Empty) returns (PatientList);
+    rpc AddPatient (Patient) returns (Patient);
+    rpc UpdatePatient (Patient) returns (Patient);
+    rpc DeletePatient (PatientId) returns (DeleteResponse);
+    rpc SearchPatients (SearchPatientRequest) returns (PatientList);
 }
 
 message Empty {}
 
-message PatientRequest {
-  string name = 1;
-  int32 age = 2;
-  string disease = 3;
+message Patient {
+    int32 id = 1;
+    string name = 2;
+    int32 age = 3;
+    string disease = 4;
 }
 
-message PatientResponse {
-  int32 id = 1;
-  string name = 2;
-  int32 age = 3;
-  string disease = 4;
+message PatientId {
+    int32 id = 1;
+}
+
+message SearchPatientRequest {
+    string keyword = 1;
 }
 
 message PatientList {
-  repeated PatientResponse patients = 1;
+    repeated Patient patients = 1;
+}
+
+message DeleteResponse {
+    bool success = 1;
+    string message = 2;
 }
